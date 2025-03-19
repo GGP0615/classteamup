@@ -7,11 +7,11 @@ export default function AuthLayout({
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50 px-4 py-12">
       {/* Logo and title */}
       <div className="text-center mb-6">
-        <h1 className="text-4xl font-bold tracking-tight text-indigo-700">
+        <h1 className="text-4xl font-bold tracking-tight text-teal-600">
           ClassTeamUp
         </h1>
         <p className="mt-2 text-base text-gray-600">
-          Where teamwork meets learning
+          Building Balanced and Inclusive Teams!
         </p>
       </div>
       

@@ -69,15 +69,15 @@ export default function SignInForm() {
     <div className="flex flex-col items-center">
       {/* Logo and heading */}
       <div className="text-center mb-8">
-        <div className="mx-auto h-16 w-16 mb-4 rounded-full bg-indigo-100 flex items-center justify-center">
+        <div className="mx-auto h-16 w-16 mb-4 rounded-full bg-teal-50 flex items-center justify-center">
           <Image 
-            src="/CTU.svg" 
+            src="/logo.png"
             alt="ClassTeamUp Logo"
-            width={40}
-            height={40}
+            width={100}
+            height={100}
           />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900">Welcome back</h2>
+        <h2 className="text-3xl font-bold text-teal-600">Welcome back</h2>
         <p className="mt-2 text-sm text-gray-600">
           Sign in to your account to continue
         </p>
@@ -89,7 +89,7 @@ export default function SignInForm() {
           type="button"
           className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
             role === 'student' 
-              ? 'bg-white shadow-sm text-indigo-700 border border-gray-200' 
+              ? 'bg-white shadow-sm text-teal-700 border border-gray-200'
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
           }`}
           onClick={() => setRole('student')}
@@ -100,7 +100,7 @@ export default function SignInForm() {
           type="button"
           className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
             role === 'instructor' 
-              ? 'bg-white shadow-sm text-indigo-700 border border-gray-200' 
+              ? 'bg-white shadow-sm text-teal-700 border border-gray-200'
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
           }`}
           onClick={() => setRole('instructor')}
@@ -119,7 +119,7 @@ export default function SignInForm() {
       {/* Sign in form */}
       <form onSubmit={handleSubmit} className="w-full space-y-5">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-800">
+          <label htmlFor="email" className="block text-sm font-medium text-teal-800">
             Email address
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
@@ -132,7 +132,7 @@ export default function SignInForm() {
               type="email"
               autoComplete="email"
               required
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-white text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-white text-black focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -143,7 +143,7 @@ export default function SignInForm() {
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-800">
+          <label htmlFor="password" className="block text-sm font-medium text-teal-800">
             Password
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
@@ -156,7 +156,7 @@ export default function SignInForm() {
               type={showPassword ? "text" : "password"}
               autoComplete="current-password"
               required
-              className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md bg-white text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md bg-white text-black focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -185,7 +185,7 @@ export default function SignInForm() {
               id="remember-me"
               name="remember-me"
               type="checkbox"
-              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              className="h-4 w-4 text-teal-600 focus:ring-teal-500 border-gray-300 rounded"
             />
             <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
               Remember me
@@ -193,7 +193,7 @@ export default function SignInForm() {
           </div>
 
           <div className="text-sm">
-            <Link href="/auth/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500">
+            <Link href="/auth/forgot-password" className="font-medium text-teal-600 hover:text-teal-500">
               Forgot your password?
             </Link>
           </div>
@@ -203,7 +203,7 @@ export default function SignInForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-75"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-75"
           >
             {loading ? (
               <>
@@ -233,7 +233,7 @@ export default function SignInForm() {
         <div className="mt-6">
           <Link
             href="/auth/signup"
-            className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-full flex justify-center py-2 px-4 border border-teal-500 rounded-md shadow-sm text-sm font-medium text-teal-700 bg-white hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
           >
             <UserPlus className="mr-2 h-4 w-4" />
             Create new account

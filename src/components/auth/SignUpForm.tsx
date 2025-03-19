@@ -148,17 +148,17 @@ export default function SignUpForm() {
     <div className="flex flex-col items-center">
       {/* Logo and heading */}
       <div className="text-center mb-8">
-        <div className="mx-auto h-16 w-16 mb-4 rounded-full bg-indigo-100 flex items-center justify-center">
+        <div className="mx-auto h-16 w-16 mb-4 rounded-full bg-teal-50 flex items-center justify-center">
           <Image 
-            src="/CTU.svg" 
+            src="/logo.png"
             alt="ClassTeamUp Logo"
-            width={40}
-            height={40}
+            width={100}
+            height={100}
           />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900">Create your account</h2>
+        <h2 className="text-3xl font-bold text-teal-600 font-nunito">Create your account</h2>
         <p className="mt-2 text-sm text-gray-600">
-          Join ClassTeamUp to start collaborating
+          Join ClassTeamUp & start collaborating
         </p>
       </div>
 
@@ -167,8 +167,8 @@ export default function SignUpForm() {
         <button
           type="button"
           className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-            formData.role === 'student' 
-              ? 'bg-white shadow-sm text-indigo-700 border border-gray-200' 
+            formData.role === 'student'
+              ? 'bg-white shadow-sm text-teal-700 border border-gray-200'
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
           }`}
           onClick={() => setFormData({ ...formData, role: 'student' })}
@@ -178,8 +178,8 @@ export default function SignUpForm() {
         <button
           type="button"
           className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-            formData.role === 'instructor' 
-              ? 'bg-white shadow-sm text-indigo-700 border border-gray-200' 
+            formData.role === 'instructor'
+              ? 'bg-white shadow-sm text-teal-700 border border-gray-200'
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
           }`}
           onClick={() => setFormData({ ...formData, role: 'instructor' })}
@@ -205,7 +205,7 @@ export default function SignUpForm() {
       {/* Sign up form */}
       <form onSubmit={handleSubmit} className="w-full space-y-5">
         <div>
-          <label htmlFor="fullName" className="block text-sm font-medium text-gray-800">
+          <label htmlFor="fullName" className="block text-sm font-medium text-teal-800">
             Full Name
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
@@ -217,7 +217,7 @@ export default function SignUpForm() {
               name="fullName"
               type="text"
               required
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-white text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-white text-black focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
               placeholder="John Doe"
               value={formData.fullName}
               onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
@@ -228,7 +228,7 @@ export default function SignUpForm() {
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-800">
+          <label htmlFor="email" className="block text-sm font-medium text-teal-800">
             Email address
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
@@ -241,7 +241,7 @@ export default function SignUpForm() {
               type="email"
               autoComplete="email"
               required
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-white text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md bg-white text-black focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
               placeholder="you@example.com"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -252,7 +252,7 @@ export default function SignUpForm() {
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-800">
+          <label htmlFor="password" className="block text-sm font-medium text-teal-800">
             Password
           </label>
           <div className="mt-1 relative rounded-md shadow-sm">
@@ -265,7 +265,7 @@ export default function SignUpForm() {
               type={showPassword ? "text" : "password"}
               autoComplete="new-password"
               required
-              className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md bg-white text-black focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md bg-white text-black focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
               placeholder="••••••••"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -292,7 +292,7 @@ export default function SignUpForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-75"
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-75"
           >
             {loading ? (
               <>
@@ -322,7 +322,7 @@ export default function SignUpForm() {
         <div className="mt-6">
           <Link
             href="/auth/signin"
-            className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="w-full flex justify-center py-2 px-4 border border-teal-300 rounded-md shadow-sm text-sm font-medium text-teal-700 bg-white hover:bg-teal-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
           >
             Sign in to your account
           </Link>
@@ -330,4 +330,4 @@ export default function SignUpForm() {
       </div>
     </div>
   )
-} 
+}
