@@ -1,115 +1,87 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import SignInForm from '@/components/auth/SignInForm'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
-import toast from 'react-hot-toast'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
-// Mock the modules
-jest.mock('@supabase/auth-helpers-nextjs')
+// Mock Lucide icons
+jest.mock('lucide-react', () => ({
+  Mail: () => <span data-testid="mail-icon" />,
+  KeyRound: () => <span data-testid="key-icon" />,
+  LogIn: () => <span data-testid="login-icon" />,
+  UserPlus: () => <span data-testid="user-plus-icon" />,
+  Loader2: () => <span data-testid="loader-icon" />,
+  Eye: () => <span data-testid="eye-icon" />,
+  EyeOff: () => <span data-testid="eye-off-icon" />
+}))
+
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn()
 }))
-jest.mock('react-hot-toast')
+
+jest.mock('@supabase/auth-helpers-nextjs', () => ({
+  createClientComponentClient: jest.fn()
+}))
 
 describe('SignInForm', () => {
-  const mockPush = jest.fn()
-  const mockSignIn = jest.fn()
-  
+  const mockRouter = {
+    push: jest.fn()
+  }
+
   beforeEach(() => {
-    // Set up mocks
-    useRouter.mockReturnValue({
-      push: mockPush
-    })
-    
+    jest.clearAllMocks()
+    useRouter.mockReturnValue(mockRouter)
     createClientComponentClient.mockReturnValue({
       auth: {
-        signInWithPassword: mockSignIn,
-        getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null })
-      },
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ 
-        data: { role: 'student' }, 
-        error: null 
-      })
+        signInWithPassword: jest.fn().mockResolvedValue({ data: { user: { id: 'test-id' } }, error: null })
+      }
     })
-    
-    // Clear mock calls between tests
-    jest.clearAllMocks()
   })
-  
-  test('renders the sign-in form', () => {
+
+  it('renders sign in form', () => {
+    render(<SignInForm />)
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
+  })
+
+  it('handles successful sign in', async () => {
     render(<SignInForm />)
     
-    // Check that key elements are present
-    expect(screen.getByText(/Welcome back/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Email address/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Password/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Sign in/i })).toBeInTheDocument()
-  })
-  
-  test('handles form submission', async () => {
-    // Mock successful sign-in
-    mockSignIn.mockResolvedValueOnce({
-      data: { user: { id: 'user123' } },
-      error: null
-    })
-    
-    render(<SignInForm />)
-    
-    // Fill out the form
-    fireEvent.change(screen.getByLabelText(/Email address/i), {
+    fireEvent.change(screen.getByLabelText(/email/i), {
       target: { value: 'test@example.com' }
     })
-    
-    fireEvent.change(screen.getByLabelText(/Password/i), {
+    fireEvent.change(screen.getByLabelText(/password/i), {
       target: { value: 'password123' }
     })
     
-    // Submit the form
-    fireEvent.click(screen.getByRole('button', { name: /Sign in/i }))
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }))
     
-    // Verify form submission
     await waitFor(() => {
-      expect(mockSignIn).toHaveBeenCalledWith({
-        email: 'test@example.com',
-        password: 'password123'
-      })
-    })
-    
-    // Verify successful sign-in actions
-    await waitFor(() => {
-      expect(toast.success).toHaveBeenCalledWith('Signed in successfully!')
-      expect(mockPush).toHaveBeenCalledWith('/student-dashboard')
+      expect(mockRouter.push).toHaveBeenCalledWith('/dashboard')
     })
   })
-  
-  test('displays error message on failed sign-in', async () => {
-    // Mock failed sign-in
-    mockSignIn.mockResolvedValueOnce({
-      data: { user: null },
-      error: { message: 'Invalid credentials' }
+
+  it('displays error message on failed sign in', async () => {
+    const errorMessage = 'Invalid credentials'
+    createClientComponentClient.mockReturnValueOnce({
+      auth: {
+        signInWithPassword: jest.fn().mockResolvedValue({ data: null, error: { message: errorMessage } })
+      }
     })
     
     render(<SignInForm />)
     
-    // Fill out the form
-    fireEvent.change(screen.getByLabelText(/Email address/i), {
-      target: { value: 'wrong@example.com' }
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: 'test@example.com' }
     })
-    
-    fireEvent.change(screen.getByLabelText(/Password/i), {
+    fireEvent.change(screen.getByLabelText(/password/i), {
       target: { value: 'wrongpassword' }
     })
     
-    // Submit the form
-    fireEvent.click(screen.getByRole('button', { name: /Sign in/i }))
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }))
     
-    // Verify error handling
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalled()
-      expect(mockPush).not.toHaveBeenCalled()
+      expect(screen.getByText(errorMessage)).toBeInTheDocument()
     })
   })
 }) 

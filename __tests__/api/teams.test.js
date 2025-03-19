@@ -1,11 +1,43 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+
+// Mock the NextRequest and NextResponse
+class MockRequest {
+  constructor(url, options = {}) {
+    this.url = url
+    this.method = options.method || 'GET'
+    this.headers = new Headers(options.headers)
+    this.body = options.body
+  }
+
+  json() {
+    return Promise.resolve(JSON.parse(this.body))
+  }
+}
+
+class MockResponse {
+  constructor(body, init = {}) {
+    this.body = body
+    this.init = init
+    this.status = init.status || 200
+  }
+
+  json() {
+    return Promise.resolve(this.body)
+  }
+
+  static json(body, init) {
+    return new MockResponse(body, init)
+  }
+}
+
+global.Request = MockRequest
+global.Response = MockResponse
 
 // Mock the route handler
 jest.mock('@/app/api/teams/route.ts', () => ({
   GET: jest.fn(),
   POST: jest.fn()
-}), { virtual: true })
+}))
 
 // Import the mocked module
 import { GET, POST } from '@/app/api/teams/route.ts'
@@ -21,7 +53,7 @@ describe('Teams API', () => {
   
   beforeEach(() => {
     // Create a mock request
-    mockRequest = new NextRequest('http://localhost:3000/api/teams')
+    mockRequest = new MockRequest('http://localhost:3000/api/teams')
     
     // Mock Supabase client responses
     mockSupabase = {
@@ -51,7 +83,7 @@ describe('Teams API', () => {
   
   test('GET request returns teams data', async () => {
     // Mock the response
-    const mockResponse = NextResponse.json({ 
+    const mockResponse = MockResponse.json({ 
       teams: [
         { id: 'team1', name: 'Team 1', members: ['user1', 'user2'] },
         { id: 'team2', name: 'Team 2', members: ['user3', 'user4'] }
@@ -78,13 +110,13 @@ describe('Teams API', () => {
     }
     
     // Create a mock request with body
-    mockRequest = new NextRequest('http://localhost:3000/api/teams', {
+    mockRequest = new MockRequest('http://localhost:3000/api/teams', {
       method: 'POST',
       body: JSON.stringify(requestBody)
     })
     
     // Mock the response
-    const mockResponse = NextResponse.json({ 
+    const mockResponse = MockResponse.json({ 
       success: true, 
       team: { id: 'new-team-id', ...requestBody } 
     }, { status: 201 })

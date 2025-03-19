@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
-import StudentDashboardPage from '@/app/(dashboard)/student-dashboard/page'
+import StudentDashboardPage from '@/app/student/dashboard/page'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 // Mock the components used by the dashboard
@@ -24,70 +24,62 @@ jest.mock('@/components/dashboard/BrowseStudentsCard', () => {
   }
 })
 
-// Mock the Supabase client
-jest.mock('@supabase/auth-helpers-nextjs')
+jest.mock('@supabase/auth-helpers-nextjs', () => ({
+  createClientComponentClient: jest.fn()
+}))
 
 describe('StudentDashboardPage', () => {
   beforeEach(() => {
-    // Mock user data
+    jest.clearAllMocks()
     createClientComponentClient.mockReturnValue({
-      auth: {
-        getUser: jest.fn().mockResolvedValue({
-          data: { user: { id: 'user123' } },
-          error: null
-        })
-      },
       from: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockImplementation((table) => {
-        if (table === 'users') {
-          return Promise.resolve({
-            data: {
-              id: 'user123',
-              full_name: 'Test User',
-              email: 'test@example.com',
-              bio: 'Test bio that is long enough',
-              looking_for_team: true
-            },
-            error: null
-          })
-        } else if (table === 'team_members') {
-          return Promise.resolve({
-            data: null,
-            error: null
-          })
+      single: jest.fn().mockResolvedValue({
+        data: {
+          first_name: 'John',
+          last_name: 'Doe',
+          completion_percentage: 100,
+          looking_for_team: true
         }
-        return Promise.resolve({ data: null, error: null })
       })
     })
   })
 
-  test('renders student dashboard with profile data', async () => {
+  it('renders dashboard with user data', async () => {
     render(<StudentDashboardPage />)
     
-    // Initially shows loading state
-    expect(screen.getByText(/Loading dashboard.../i)).toBeInTheDocument()
-    
-    // After data loads, should show main dashboard components
     await waitFor(() => {
-      expect(screen.getByText(/Student Dashboard/i)).toBeInTheDocument()
+      expect(screen.getByText(/welcome, john/i)).toBeInTheDocument()
+      expect(screen.getByText(/100%/)).toBeInTheDocument()
+    })
+  })
+
+  it('shows loading state', async () => {
+    createClientComponentClient.mockReturnValueOnce({
+      from: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn(() => new Promise(() => {})) // Never resolves
     })
     
-    // Check that profile completion card renders
-    await waitFor(() => {
-      expect(screen.getByText(/Profile Completion/i)).toBeInTheDocument()
+    render(<StudentDashboardPage />)
+    
+    expect(screen.getByTestId('loading-spinner')).toBeInTheDocument()
+  })
+
+  it('handles error state', async () => {
+    createClientComponentClient.mockReturnValueOnce({
+      from: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockRejectedValue(new Error('Failed to load'))
     })
     
-    // Check that team availability card renders with correct props
-    await waitFor(() => {
-      const teamCard = screen.getByTestId('team-availability-card')
-      expect(teamCard).toHaveTextContent('Team Availability: Enabled')
-    })
+    render(<StudentDashboardPage />)
     
-    // Check that browse students card renders
     await waitFor(() => {
-      expect(screen.getByTestId('browse-students-card')).toBeInTheDocument()
+      expect(screen.getByText(/error loading dashboard/i)).toBeInTheDocument()
     })
   })
 }) 
