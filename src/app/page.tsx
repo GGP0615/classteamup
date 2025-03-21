@@ -7,6 +7,10 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Users, Zap, Award, Star } from 'lucide-react' // Removed Sun and Moon
 import { useEffect } from 'react' // Removed useState
 
+// Color constants
+const tealColor = '#14b8a6' // teal-500
+const lightTealHover = '#0d9488' // teal-600
+
 export default function HomePage() {
   const tealColor = '#18A5A7';
   const lightTealHover = '#138082';
@@ -233,8 +237,8 @@ export default function HomePage() {
             <p className="text-center text-gray-500">
               © {new Date().getFullYear()} ClassTeamUp. All rights reserved.
             </p>
-          </div>
         </div>
+      </div>
       </footer>
     </div>
   )
