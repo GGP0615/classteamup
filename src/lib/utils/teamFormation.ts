@@ -1,15 +1,20 @@
 import { TeamFormationRule } from "./teamRules"
 
+interface Skill {
+  skill_id: string;
+  proficiency_level: number;
+}
+
 interface Student {
-  id: string
-  full_name: string
-  user_skills: {
-    skill_id: string
-    proficiency_level: number
-    skills: {
-      name: string
-    }
-  }[]
+  id: string;
+  skills: Skill[];
+}
+
+interface TeamScore {
+  skillCoverage: number;
+  skillBalance: number;
+  skillDiversity: number;
+  total: number;
 }
 
 interface Team {
@@ -76,7 +81,7 @@ function calculateStudentSkillCount(
   student: Student,
   rules: TeamFormationRule
 ): number {
-  return student.user_skills.filter(skill =>
+  return student.skills.filter(skill =>
     rules.required_skills.some(req =>
       req.skillId === skill.skill_id &&
       skill.proficiency_level >= req.minProficiency
@@ -91,7 +96,7 @@ function calculateStudentSkillCoverage(
   const coverage: { [skillId: string]: number } = {}
   
   rules.required_skills.forEach(requirement => {
-    coverage[requirement.skillId] = student.user_skills.some(skill =>
+    coverage[requirement.skillId] = student.skills.some(skill =>
       skill.skill_id === requirement.skillId &&
       skill.proficiency_level >= requirement.minProficiency
     ) ? 1 : 0
@@ -214,4 +219,106 @@ export function calculateTeamSkillCoverage(members: Student[], rules: TeamFormat
 }
 
 // Make sure calculateTeamScore is also exported
-export { calculateTeamScore } 
+export { calculateTeamScore }
+
+function calculateTeamCompatibility(team: Student[]): TeamScore {
+  if (!team || team.length === 0) {
+    return {
+      skillCoverage: 0,
+      skillBalance: 0,
+      skillDiversity: 0,
+      total: 0
+    }
+  }
+
+  // Get all unique skills in the team
+  const allSkills = new Set<string>()
+  const skillMap = new Map<string, number[]>()
+
+  team.forEach(student => {
+    student.skills.forEach(skill => {
+      allSkills.add(skill.skill_id)
+      if (!skillMap.has(skill.skill_id)) {
+        skillMap.set(skill.skill_id, [])
+      }
+      skillMap.get(skill.skill_id)?.push(skill.proficiency_level)
+    })
+  })
+
+  // Calculate skill coverage (how many different skills are covered)
+  const skillCoverage = allSkills.size / (team.length * 3) // Assuming ideal is 3 unique skills per person
+
+  // Calculate skill balance (distribution of proficiency levels)
+  let skillBalance = 0
+  skillMap.forEach(levels => {
+    const avg = levels.reduce((a, b) => a + b, 0) / levels.length
+    const variance = levels.reduce((acc, val) => acc + Math.pow(val - avg, 2), 0) / levels.length
+    skillBalance += 1 / (1 + variance) // Higher variance means lower balance
+  })
+  skillBalance = skillBalance / skillMap.size
+
+  // Calculate skill diversity (penalize duplicate skills)
+  let duplicatePenalty = 0;
+  const seenSkills = new Map<string, number[]>();
+  
+  team.forEach(student => {
+    student.skills.forEach(skill => {
+      if (!seenSkills.has(skill.skill_id)) {
+        seenSkills.set(skill.skill_id, [skill.proficiency_level]);
+      } else {
+        const existingProficiencies = seenSkills.get(skill.skill_id)!;
+        // Apply a stronger penalty for similar proficiency levels
+        existingProficiencies.forEach(existingProf => {
+          if (Math.abs(existingProf - skill.proficiency_level) <= 1) {
+            duplicatePenalty += 0.6; // Increased from 0.4 to 0.6
+          }
+        });
+        existingProficiencies.push(skill.proficiency_level);
+      }
+    });
+  });
+  
+  const skillDiversity = Math.max(0, 1 - duplicatePenalty);
+
+  // Calculate total score with weights
+  const total = (
+    skillCoverage * 0.4 + // 40% weight on skill coverage
+    skillBalance * 0.3 + // 30% weight on skill balance
+    skillDiversity * 0.3 // 30% weight on skill diversity
+  )
+
+  return {
+    skillCoverage,
+    skillBalance,
+    skillDiversity,
+    total
+  }
+}
+
+function findOptimalTeam(targetStudent: Student, availableStudents: Student[], maxSize: number): Student[] {
+  if (!availableStudents || availableStudents.length === 0) {
+    return []
+  }
+
+  // Sort students by compatibility score with target student
+  const scoredStudents = availableStudents.map(student => ({
+    student,
+    score: calculateTeamCompatibility([targetStudent, student]).total
+  }))
+
+  scoredStudents.sort((a, b) => b.score - a.score)
+
+  // Take the top N-1 students (N = maxSize)
+  const selectedStudents = scoredStudents
+    .slice(0, maxSize - 1)
+    .map(({ student }) => student)
+
+  // Verify the final team score
+  const finalTeam = [targetStudent, ...selectedStudents]
+  const finalScore = calculateTeamCompatibility(finalTeam)
+
+  // Only return the team if the score is above a threshold
+  return finalScore.total >= 0.5 ? selectedStudents : []
+}
+
+export { calculateTeamCompatibility, findOptimalTeam } 

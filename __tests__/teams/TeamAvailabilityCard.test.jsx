@@ -1,103 +1,146 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import TeamAvailabilityCard from '@/components/teams/TeamAvailabilityCard'
+import TeamAvailabilityCard from '@/app/teams/components/TeamAvailabilityCard'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import toast from 'react-hot-toast'
 
 // Mock the modules
-jest.mock('@supabase/auth-helpers-nextjs')
+jest.mock('@supabase/auth-helpers-nextjs', () => ({
+  createClientComponentClient: jest.fn(() => ({
+    auth: {
+      getUser: jest.fn().mockResolvedValue({
+        data: { user: { id: 'user123' } },
+        error: null
+      })
+    },
+    from: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({
+      data: {
+        id: 'profile123',
+        looking_for_team: false,
+        completion_percentage: 100
+      },
+      error: null
+    }),
+    update: jest.fn().mockResolvedValue({
+      data: { id: 'profile123' },
+      error: null
+    })
+  }))
+}))
 jest.mock('react-hot-toast')
 
 describe('TeamAvailabilityCard', () => {
   const mockUpdateUser = jest.fn()
   
   beforeEach(() => {
-    // Set up mocks
+    jest.clearAllMocks()
     createClientComponentClient.mockReturnValue({
-      auth: {
-        getUser: jest.fn().mockResolvedValue({ 
-          data: { user: { id: 'user123' } }, 
-          error: null 
-        })
-      },
       from: jest.fn().mockReturnThis(),
-      update: mockUpdateUser.mockResolvedValue({ data: {}, error: null }),
-      eq: jest.fn().mockReturnThis()
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({
+        data: {
+          looking_for_team: false,
+          completion_percentage: 100
+        }
+      }),
+      update: mockUpdateUser.mockResolvedValue({ data: {}, error: null })
+    })
+  })
+  
+  test('renders with initial looking for team status as false', async () => {
+    render(<TeamAvailabilityCard />)
+    
+    await waitFor(() => {
+      expect(screen.getByText(/Not Looking for Team/i)).toBeInTheDocument()
+      expect(screen.getByRole('switch')).not.toBeChecked()
+    })
+  })
+  
+  test('renders with initial looking for team status as true', async () => {
+    jest.mocked(createClientComponentClient).mockReturnValueOnce({
+      ...createClientComponentClient(),
+      single: jest.fn().mockResolvedValue({
+        data: {
+          id: 'profile123',
+          looking_for_team: true,
+          completion_percentage: 100
+        },
+        error: null
+      })
     })
     
-    // Clear mock calls between tests
-    jest.clearAllMocks()
-  })
-  
-  test('renders with initial looking for team status as false', () => {
-    render(<TeamAvailabilityCard initialLookingForTeam={false} isProfileComplete={true} />)
+    render(<TeamAvailabilityCard />)
     
-    // Check that key elements are present
-    expect(screen.getByText(/Find a Team/i)).toBeInTheDocument()
-    expect(screen.getByText(/You're not currently looking for a team/i)).toBeInTheDocument()
-    
-    // Check that button shows correct text
-    expect(screen.getByRole('button', { name: /Find a Team/i })).toBeInTheDocument()
-  })
-  
-  test('renders with initial looking for team status as true', () => {
-    render(<TeamAvailabilityCard initialLookingForTeam={true} isProfileComplete={true} />)
-    
-    // Check that key elements are present
-    expect(screen.getByText(/Find a Team/i)).toBeInTheDocument()
-    expect(screen.getByText(/You're currently looking for a team/i)).toBeInTheDocument()
-    
-    // Check that button shows correct text
-    expect(screen.getByRole('button', { name: /Stop Looking for Team/i })).toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.getByText(/Looking for Team/i)).toBeInTheDocument()
+      expect(screen.getByRole('switch')).toBeChecked()
+    })
   })
   
   test('handles toggle action when enabled', async () => {
-    render(<TeamAvailabilityCard initialLookingForTeam={false} isProfileComplete={true} />)
+    render(<TeamAvailabilityCard />)
     
-    // Click the button to enable team search
-    fireEvent.click(screen.getByRole('button', { name: /Find a Team/i }))
-    
-    // Verify update was called with correct values
     await waitFor(() => {
-      expect(mockUpdateUser).toHaveBeenCalledWith({
-        looking_for_team: true,
-        updated_at: expect.any(String)
-      })
-      expect(toast.success).toHaveBeenCalledWith("You are now available for team matching!")
+      const toggle = screen.getByRole('switch')
+      fireEvent.click(toggle)
     })
     
-    // Check that the UI has updated
-    expect(screen.getByRole('button', { name: /Stop Looking for Team/i })).toBeInTheDocument()
+    await waitFor(() => {
+      expect(createClientComponentClient().update).toHaveBeenCalledWith({
+        looking_for_team: true
+      })
+    })
   })
   
   test('handles toggle action when disabled', async () => {
-    render(<TeamAvailabilityCard initialLookingForTeam={true} isProfileComplete={true} />)
-    
-    // Click the button to disable team search
-    fireEvent.click(screen.getByRole('button', { name: /Stop Looking for Team/i }))
-    
-    // Verify update was called with correct values
-    await waitFor(() => {
-      expect(mockUpdateUser).toHaveBeenCalledWith({
-        looking_for_team: false,
-        updated_at: expect.any(String)
+    jest.mocked(createClientComponentClient).mockReturnValueOnce({
+      ...createClientComponentClient(),
+      single: jest.fn().mockResolvedValue({
+        data: {
+          id: 'profile123',
+          looking_for_team: true,
+          completion_percentage: 100
+        },
+        error: null
       })
-      expect(toast.success).toHaveBeenCalledWith("You are no longer looking for a team")
     })
     
-    // Check that the UI has updated
-    expect(screen.getByRole('button', { name: /Find a Team/i })).toBeInTheDocument()
+    render(<TeamAvailabilityCard />)
+    
+    await waitFor(() => {
+      const toggle = screen.getByRole('switch')
+      fireEvent.click(toggle)
+    })
+    
+    await waitFor(() => {
+      expect(createClientComponentClient().update).toHaveBeenCalledWith({
+        looking_for_team: false
+      })
+    })
   })
   
   test('prevents toggle when profile is incomplete', async () => {
-    render(<TeamAvailabilityCard initialLookingForTeam={false} isProfileComplete={false} />)
+    createClientComponentClient.mockReturnValue({
+      from: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({
+        data: {
+          looking_for_team: false,
+          completion_percentage: 50
+        }
+      })
+    })
     
-    // Click the button
-    fireEvent.click(screen.getByRole('button', { name: /Find a Team/i }))
+    render(<TeamAvailabilityCard />)
     
-    // Verify toast error is shown
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Please complete your profile first')
-      expect(mockUpdateUser).not.toHaveBeenCalled()
+      const toggle = screen.getByRole('switch')
+      expect(toggle).toBeDisabled()
+      expect(screen.getByText(/Complete your profile/i)).toBeInTheDocument()
     })
   })
 }) 

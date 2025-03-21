@@ -5,6 +5,10 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight, Users, Zap, Award, Star } from 'lucide-react'
 
+// Color constants
+const tealColor = '#14b8a6' // teal-500
+const lightTealHover = '#0d9488' // teal-600
+
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white">
@@ -42,9 +46,12 @@ export default function HomePage() {
               >
                 Sign In
               </Link>
-              <Link 
-                href="/auth/register" 
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+              <Link
+                href="/auth/signup"
+                className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white hover:opacity-90 transition-opacity"
+                style={{ backgroundColor: tealColor }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = lightTealHover}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = tealColor}
               >
                 Get Started
               </Link>
@@ -79,7 +86,16 @@ export default function HomePage() {
                 </Link>
                 <Link 
                   href="/auth/signin" 
-                  className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-indigo-100 bg-indigo-800 hover:bg-indigo-900"
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-teal-500 bg-white hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: 'white', color: tealColor }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = '#f2f2f2';
+                    e.currentTarget.style.color = tealColor;
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = 'white';
+                    e.currentTarget.style.color = tealColor;
+                  }}
                 >
                   Sign In as Instructor
                 </Link>
@@ -174,8 +190,8 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="ml-3 inline-flex rounded-md shadow">
-              <Link 
-                href="/auth/signin" 
+              <Link
+                href="/auth/signin"
                 className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
               >
                 Instructor Login
@@ -204,8 +220,8 @@ export default function HomePage() {
             <p className="text-center text-gray-500">
               &copy; {new Date().getFullYear()} ClassTeamUp. All rights reserved.
             </p>
-          </div>
         </div>
+      </div>
       </footer>
     </div>
   )
