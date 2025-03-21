@@ -92,7 +92,7 @@ export default function HomePage() {
               </p>
               <div className="mt-10 flex flex-col sm:flex-row gap-4">
                 <Link
-                  href="/auth/register"
+                  href="/auth/signup"
                   className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: tealColor }}
                   onMouseOver={(e) => e.currentTarget.style.backgroundColor = lightTealHover}
@@ -193,11 +193,11 @@ export default function HomePage() {
           <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
             <div className="inline-flex rounded-md shadow">
               <Link
-                href="/auth/register"
+                href="/auth/signup"
                 className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-teal-500 bg-white hover:opacity-90 transition-opacity"
-                style={{ backgroundColor: 'white', color: tealColor }} // White button and teal text
-                onMouseOver={(e) => {e.currentTarget.style.backgroundColor = '#f2f2f2'; e.currentTarget.style.color = tealColor;}} // Lighter gray on hover
-                onMouseOut={(e) => {e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = tealColor;}} // Back to white and teal
+                style={{ backgroundColor: 'white', color: tealColor }}
+                onMouseOver={(e) => {e.currentTarget.style.backgroundColor = '#f2f2f2'; e.currentTarget.style.color = tealColor;}}
+                onMouseOut={(e) => {e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = tealColor;}}
               >
                 Get Started!
                 <ArrowRight className="ml-2 h-5 w-5" style={{color: tealColor}}/>
