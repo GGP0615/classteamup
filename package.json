@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "NODE_OPTIONS='--no-deprecation' next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "clean": "if exist .next rmdir /s /q .next",
+    "build:clean": "npm run clean && npm run build"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
