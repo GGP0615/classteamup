@@ -9,5 +9,10 @@
     "env": {
       "NEXT_PRESERVE_SYMLINKS": "1"
     }
+  },
+  "git": {
+    "deploymentEnabled": {
+      "main": true
+    }
   }
 } 
