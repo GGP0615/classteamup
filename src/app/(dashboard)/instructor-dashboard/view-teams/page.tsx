@@ -1,4 +1,4 @@
-import TeamsList from '@/components/Teams/TeamsList'
+import TeamsList from '@/components/teams/TeamsList'
 
 export default function ViewTeamsPage() {
   return (
