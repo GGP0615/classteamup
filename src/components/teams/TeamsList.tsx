@@ -192,8 +192,8 @@ export default function TeamsList({ userRole, courseId }: TeamsListProps) {
                 <p className="text-gray-600">{team.description}</p>
               </div>
               <Button
-                variant="ghost"
-                size="icon"
+                variant="outline"
+                size="sm"
                 onClick={(e) => {
                   e.stopPropagation()
                   toggleTeamExpansion(team.id)
