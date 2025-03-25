@@ -1,0 +1,5 @@
+[33m20f099f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Add case sensitivity handling to Vercel config
+[33m3216711[m Fix case sensitivity in TeamsList imports
+[33m423ca32[m Fix case sensitivity in TeamsList imports
+[33m57fbd09[m Remove sensitive information from vercel.json
+[33m7cfbfcb[m Add Vercel configuration

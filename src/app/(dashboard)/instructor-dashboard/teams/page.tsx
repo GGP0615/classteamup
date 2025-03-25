@@ -184,7 +184,7 @@ export default function TeamsPage() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex flex-wrap gap-1">
-                            {member.student_skills?.map((skill) => (
+                            {member.skills?.map((skill) => (
                               <span key={`${member.id}-${skill.skill_id}`} 
                                 className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
                                 {skill.skill_id} ({skill.proficiency_level})
