@@ -209,3 +209,84 @@ Project Link: [https://github.com/GGP0615/classteamup](https://github.com/GGP061
 ---
 
 Made with ❤️ by G
+
+## Getting Started
+
+### Prerequisites
+- Node.js 18.x or later
+- npm or yarn
+- Supabase account and project
+
+### Local Development
+1. Clone the repository
+```bash
+git clone [your-repo-url]
+cd classteamup
+```
+
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Set up environment variables
+```bash
+cp .env.example .env.local
+```
+Edit `.env.local` with your Supabase credentials.
+
+4. Run the development server
+```bash
+npm run dev
+```
+
+### Production Deployment (Vercel)
+
+1. Push your code to GitHub
+
+2. Connect your repository to Vercel:
+   - Go to [Vercel](https://vercel.com)
+   - Import your repository
+   - Configure environment variables:
+     - `NEXT_PUBLIC_SUPABASE_URL`
+     - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+     - `NEXT_PUBLIC_SITE_NAME`
+     - `NEXT_PUBLIC_APP_URL`
+
+3. Deploy!
+
+## Environment Variables
+
+Required environment variables:
+- `NEXT_PUBLIC_SUPABASE_URL`: Your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Your Supabase anonymous key
+- `NEXT_PUBLIC_SITE_NAME`: Your site name (default: ClassTeamUp)
+- `NEXT_PUBLIC_APP_URL`: Your production URL
+
+## Available Scripts
+
+- `npm run dev`: Start development server
+- `npm run build`: Build for production
+- `npm start`: Start production server
+- `npm run lint`: Run ESLint
+- `npm test`: Run tests
+- `npm run clean`: Clean build files
+- `npm run build:clean`: Clean and rebuild
+
+## Tech Stack
+
+- Next.js 15
+- React 19
+- TypeScript
+- TailwindCSS
+- Supabase
+- Framer Motion
+- Jest & React Testing Library
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
